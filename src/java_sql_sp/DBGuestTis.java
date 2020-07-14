@@ -19,7 +19,7 @@ public class DBGuestTis {
 		String msg="" ; 
 		int Gtotal=0; //전체레코드갯수
 		Scanner sc = new Scanner(System.in);
-			
+	
 	 public DBGuestTis() {
 		 try{
 	     Class.forName("oracle.jdbc.driver.OracleDriver"); //드라이브로드
@@ -35,13 +35,14 @@ public class DBGuestTis {
 				
 		Scanner scin = new Scanner(System.in);
 		while(true) {
-			System.out.print("\nsp 1등록  2전체출력  3수정 4.사번수정 5.타이틀수정 9종료>>> ");
+			System.out.print("\nsp 1등록  2전체출력  3수정 4.사번수정 5.타이틀수정 6.전체출력    9종료>>> ");
 			int sel=scin.nextInt();
 			if(sel==1){gg.guestInsert();}
 			else if(sel==2){gg.guestSelectAll(); }
 			else if(sel==3){gg.guestEdit();      }
 			else if(sel==4) {gg.GuestUpdate2();  }
 			else if(sel==5) {gg.GuestUpdate3();  }
+			else if(sel==6) {gg.GuestUpdate4();  }
 			else if(sel==9){ gg.myexit(); break; }
 		}
 		scin.close();
@@ -85,6 +86,7 @@ public class DBGuestTis {
 	             System.out.print("수정후 사번 >> ");    int sabun_AFTER = Integer.parseInt(sc.next());
 	               
 	             CST=CN.prepareCall("{call GUEST_SP_UPDATE_SABUN(?, ?)}");
+	     
 	             CST.setInt(1, sabun_BEFORE);
 	             CST.setInt(2, sabun_AFTER);
 	             CST.executeUpdate();
@@ -114,7 +116,29 @@ public class DBGuestTis {
 		}
 	}
 	
-	      
+	public void GuestUpdate4() {
+		try {
+			CST = CN.prepareCall("{call guest_sp_select(?)}");
+			CST.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+			CST.executeUpdate();
+			
+			RS = (ResultSet)CST.getObject(1);
+			
+			while(RS.next()==true) {
+				int s = RS.getInt("sabun");
+				String n = RS.getString("name");
+				String t = RS.getString("title");
+				java.util.Date dt  = RS.getDate("wdate");
+				int p = RS.getInt("pay");
+				int h = RS.getInt("hit");
+				String e = RS.getString("email");
+				System.out.println( s + "\t" + n + "\t" + t  + "\t" + p  + "\t" + e );
+			}
+		} catch ( Exception e) {
+			System.out.println(e);
+		}
+	}
+	
 	public void guestInsert() {
 		try{
 			System.out.print("sp사번입력>>"); 
@@ -134,7 +158,7 @@ public class DBGuestTis {
 	
 
 	
-}/////////////////////////////////////////////class END
+}//class END
 
 
 
